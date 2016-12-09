@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <title>FDS helpet</title>
+        <meta charset="utf-8">
+        <meta name="author" content="mj4444">
+        <meta name="viewport" content="width=device-width">
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+        <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
+        <link rel="stylesheet" href="libs/bootstrap.css">
+        <link rel="stylesheet" href="index.css">
+        <script src="libs/jquery-3.1.1.min.js"></script>
+        <script src="libs/bootstrap.min.js"></script>
+        <script src="notification.js"></script>
+        <script src="index.js"></script>
+    </head>
+    <body>
+        <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+                <p class="navbar-text">FDS</p>
+                <ul class="nav navbar-nav">
+                    <li><a href="#" class="navmenu-helper">Помощник <span class="badge alert-event-count">0</span></a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Модерация<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="http://freedomsex.me/security/action/" target="fdsFrame">Новые</a></li>
+                            <li><a href="http://freedomsex.me/security/approve/" target="fdsFrame">Решение</a></li>
+                            <li><a href="http://freedomsex.me/security/arbitr/" target="fdsFrame">Арбитраж</a></li>
+                            <li><a href="http://freedomsex.me/security/verdict/" target="fdsFrame">Вердикт</a></li>
+                            <li class="dropdown-submenu">
+                                <a href="#" class="dropdown-toggle green-menu" data-toggle="dropdown">Помощь</a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="http://freedomsex.me/security/help/" target="fdsFrame">Вопросы</a></li>
+                                    <li><a href="http://freedomsex.me/security/reviews/" target="fdsFrame">Отзывы</a></li>
+                                    <li><a href="http://freedomsex.me/security/question/" target="fdsFrame">Спросить</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown-submenu">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Ключи</a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="http://freedomsex.me/security/names/" target="fdsFrame">Имена</a></li>
+                                    <li><a href="http://freedomsex.me/security/cities/" target="fdsFrame">Города</a></li>
+                                    <li><a href="http://freedomsex.me/security/tags/" target="fdsFrame">Желания</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="http://freedomsex.me/security/progress/" target="fdsFrame">Достижения</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Администрирование<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown-submenu">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Решение</a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="http://freedomsex.me/admin/closed/" target="fdsFrame">Разрешено</a></li>
+                                    <li><a href="http://freedomsex.me/admin/virted/" target="fdsFrame">Только вирт</a></li>
+                                    <li><a href="http://freedomsex.me/admin/locked/" target="fdsFrame">Наказано</a></li>
+                                    <li><a href="http://freedomsex.me/admin/banned/" target="fdsFrame">Блокировано</a></li>
+                                    <li><a href="http://freedomsex.me/admin/skipped/" target="fdsFrame">Бездна</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="http://freedomsex.me/userinfo/users/" target="fdsFrame">Пользователи</a></li>
+                            <li><a href="http://freedomsex.me/userinfo/abuse/" target="fdsFrame">Замечания</a></li>
+                            <li class="dropdown-submenu">
+                                <a href="#" class="dropdown-toggle green-menu" data-toggle="dropdown">Ответить</a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="http://freedomsex.me/admin/help/" target="fdsFrame">Открытые</a></li>
+                                    <li><a href="http://freedomsex.me/admin/help/?revers=1" target="fdsFrame">Заминусованные</a></li>
+                                    <li><a href="http://freedomsex.me/admin/help/?closed=1" target="fdsFrame">Закрытые</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><a href="https://github.com/freedomsex/freedomsex/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">GitHub</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <button type="button" class="btn btn-default navbar-btn navmenu-update">Обновить <span class="badge alert-event-update"></span></button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div id="fdsDiv" align="center">
+            <div id="noEvents" class="alert alert-info">Нет новых событий.</div>
+            <div id="actionEvents" class="panel panel-info el-hidden">
+                <div class="panel-heading">Голосование</div>
+                <ul class="list-group">
+                    <li class="list-group-item panel-info el-template">
+                        <div class="el-text">{{TEXT}}</div>
+                        <button type="button" class="btn btn-success disabled" data-mark="-1">Разрешить</button>
+                        <button type="button" class="btn btn-warning disabled" data-mark="1">Наказать</button>
+                        <button type="button" class="btn btn-default disabled" data-mark="0">Пропустить (не голосовать)</button>
+                    </li>
+                </ul>
+            </div>
+            <div id="approveEvents" class="panel panel-info el-hidden">
+                <div class="panel-heading">Решение</div>
+                <ul class="list-group">
+                    <li class="list-group-item panel-info el-template">
+                        <div class="el-text"><div class="el-blockquote el-inline"><span class="el-comment">{{COMMENT}}</span> <span class="el-text">{{TEXT}}</span></div></div>
+                        <button type="button" class="btn btn-success disabled" data-virt="0">Всегда</button>
+                        <button type="button" class="btn btn-info disabled" data-virt="1">Только вирт</button>
+                        <button type="button" class="btn btn-default disabled" data-virt="arbitr">Арбитраж</button>
+                    </li>
+                </ul>
+            </div>
+            <div id="arbitrEvents" class="panel panel-info el-hidden">
+                <div class="panel-heading">Арбитраж</div>
+                <ul class="list-group">
+                    <li class="list-group-item panel-info el-template">
+                        <div class="el-text">{{TEXT}}</div>
+                        <pre class="el-comment">{{COMMENT}}</pre>
+                        <button type="button" class="btn btn-success disabled" data-mark="1">Разрешить</button>
+                        <button type="button" class="btn btn-info disabled" data-mark="2">Только вирт</button>
+                        <button type="button" class="btn btn-warning disabled" data-mark="4">Наказать</button>
+                    </li>
+                </ul>
+            </div>
+            <div id="verdictEvents" class="panel panel-info el-hidden">
+                <div class="panel-heading">Вердикт</div>
+                <ul class="list-group">
+                    <li class="list-group-item panel-info el-template">
+                        <div class="el-text">{{TEXT}}</div>
+                        <pre class="el-comment">{{COMMENT}}</pre>
+                        <button type="button" class="btn btn-danger disabled" data-mark="8">Блокировать навсегда</button>
+                        <button type="button" class="btn btn-warning disabled" data-mark="4">Наказать, без блокировки</button>
+                        <button type="button" class="btn btn-default disabled" data-mark="arbitr">Арбитраж</button>
+                    </li>
+                </ul>
+            </div>
+            <div id="helpEvents" class="panel panel-info el-hidden">
+                <div class="panel-heading">Помощь</div>
+                <ul class="list-group">
+                    <li class="list-group-item panel-info el-template">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-success btn-sm disabled" data-vote="plus">Да, это важно</button>
+                            <button type="button" class="btn btn-warning btn-sm disabled" data-vote="minus">Отклонить</button>
+                        </div>
+                        <div class="el-text text-left">{{TEXT}}</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <iframe id="fdsFrame" name="fdsFrame" src="about:blank" scrolling="auto" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+    </body>
+</html>

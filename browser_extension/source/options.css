@@ -1,0 +1,10 @@
+body { padding: 0; margin: 0; border: 0; }
+
+.navbar { min-height: 30px; margin-bottom: 10px; }
+.navbar-text { margin-top: 5px; margin-bottom: 5px; }
+input[type="radio"], input[type="checkbox"] { margin: 0; }
+.radio label, .checkbox label { padding-top: 2px; padding-bottom: 2px; }
+
+.el-block { padding: 0 10px 10px 10px; }
+.el-nobr { white-space: nowrap; }
+.el-label { font-weight: bold; }

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <title>FDS helpet</title>
+        <meta charset="utf-8">
+        <meta name="author" content="mj4444">
+        <meta name="viewport" content="width=device-width">
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+        <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
+        <link rel="stylesheet" href="libs/bootstrap.css">
+        <link rel="stylesheet" href="options.css">
+        <script src="libs/jquery-3.1.1.min.js"></script>
+        <script src="libs/bootstrap.min.js"></script>
+        <script src="notification.js"></script>
+        <script src="options.js"></script>
+    </head>
+    <body>
+        <nav class="navbar navbar-default navbar-static-top">
+            <div class="container">
+                <p class="navbar-text">Уведомления</p>
+            </div>
+        </nav>
+        <div class="el-block">
+            <form class="form-horizontal">
+                <select id="notificationType">
+                    <option value="chrome" selected>Chrome уведомления</option>
+                    <option value="html5">HTML5 уведомления</option>
+                    <option value="none">Без уведомления</option>
+                </select>
+                <div id="eventTypes" class="checkbox el-nobr">
+                    <label class="checkbox-inline"><input type="checkbox" value="action" checked> Голосование</label>
+                    <label class="checkbox-inline"><input type="checkbox" value="approve" checked> Решение</label>
+                    <label class="checkbox-inline"><input type="checkbox" value="arbitr" checked> Арбитраж</label>
+                    <label class="checkbox-inline"><input type="checkbox" value="verdict" checked> Вердикт</label>
+                    <label class="checkbox-inline"><input type="checkbox" value="help" checked> Помощь</label>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>
