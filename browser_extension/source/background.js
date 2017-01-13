@@ -67,9 +67,6 @@ events.runtime.onStartup = function () {
             app.updateActionIcon();
         });
     }
-    app.updateActionIcon();
-    app.data.nextEventUpdateTime = app.timer() + (config.refresh.firstPeriodInSec * 1000);
-    app.data.timerId = window.setInterval(events.timer.updateExternalData, 1000);
 };
 
 events.runtime.onMessage = function(message, sender, sendResponse)
@@ -406,6 +403,12 @@ app.openMainTab = function () {
     });
 };
 
+app.run = function () {
+    app.updateActionIcon();
+    app.data.nextEventUpdateTime = app.timer() + (config.refresh.firstPeriodInSec * 1000);
+    app.data.timerId = window.setInterval(events.timer.updateExternalData, 1000);
+}
+
 chrome.storage.onChanged.addListener(events.storage.onChanged);
 app.storage.load(function () {
     chrome.browserAction.onClicked.addListener(events.browserAction.onClicked);
@@ -415,3 +418,4 @@ app.storage.load(function () {
 chrome.runtime.onInstalled.addListener(events.runtime.onInstalled);
 chrome.runtime.onStartup.addListener(events.runtime.onStartup);
 chrome.runtime.onMessage.addListener(events.runtime.onMessage);
+app.run();
