@@ -108,6 +108,28 @@
         </nav>
         <div id="fdsDiv" align="center">
             <div id="noEvents" class="alert alert-info">Нет новых событий.</div>
+            <div id="abuseEvents" class="panel panel-info el-hidden">
+                <div class="panel-heading">Замечания</div>
+                <ul class="list-group">
+                    <li class="list-group-item panel-info el-template">
+                        <div class="pull-left text-left">
+                            <div class="small">
+                                <a class="sender-id" href="{{LINK}}" target="fdsFrame">{{ID}}</a>:
+                                <a class="sender-anketa" href="{{LINK}}" target="fdsFrame">Анкета ябеды</a>
+                            </div>
+                            <div class="small">
+                                <a class="subject-id" href="{{LINK}}" target="fdsFrame">{{ID}}</a>:
+                                <a class="subject-anketa" href="{{LINK}}" target="fdsFrame">Анкета нарушителя</a>
+                            </div>
+                        </div>
+                        <div class="pull-right">
+                            <a class="btn btn-primary btn-sm abuse-link" href="{{LINK}}" target="fdsFrame">В анкету</a>
+                        </div>
+                        <div class="el-text">{{TEXT}}</div>
+                        <!--<a href="{{LINK}}" class="el-text abuse-link" target="fdsFrame">{{TEXT}}</a>-->
+                    </li>
+                </ul>
+            </div>
             <div id="actionEvents" class="panel panel-info el-hidden">
                 <div class="panel-heading">Голосование</div>
                 <ul class="list-group">
@@ -160,7 +182,9 @@
                     <li class="list-group-item panel-info el-template">
                         <div class="pull-right">
                             <button type="button" class="btn btn-success btn-sm disabled" data-vote="plus">Да, это важно</button>
+                            <a class="btn btn-primary btn-sm" href="{{LINK}}" target="fdsFrame">Ответить</a>
                             <button type="button" class="btn btn-warning btn-sm disabled" data-vote="minus">Отклонить</button>
+                            <button type="button" class="btn btn-warning btn-sm disabled" data-vote="promo">Я не знакомлюсь</button>
                         </div>
                         <div class="el-text text-left">{{TEXT}}</div>
                     </li>

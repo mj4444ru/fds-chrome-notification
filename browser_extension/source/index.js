@@ -3,7 +3,18 @@
 /* global window, chrome, $ */
 
 $(function() {
-    var lockButtonTime = 1000;
+    var lockButtonTime = 1500;
+
+    var showFdsDiv = function() {
+        $('#fdsFrame').attr('src', 'about:blank');
+        $('#fdsFrame').hide();
+        $('#fdsDiv').show();
+    }
+    var showFdsFrame = function() {
+        $('#fdsDiv').hide();
+        $('#fdsFrame').show();
+        updateFdsFrameSize();
+    }
 
     $('ul.dropdown-menu [data-toggle=dropdown]').on('click', function(event) {
         event.preventDefault();
@@ -27,18 +38,10 @@ $(function() {
     });
 
     $('.navbar-fixed-top a[target=fdsFrame]').on('click', function(event) {
-        $('#fdsDiv').hide();
-        $('#fdsFrame').show();
-        updateFdsFrameSize();
-    });
-    $('.navbar-fixed-top a[target=fdsFrame]').on('click', function(event) {
-        $('#fdsDiv').hide();
-        $('#fdsFrame').show();
+        showFdsFrame();
     });
     $('.navmenu-helper').on('click', function(event) {
-        $('#fdsFrame').attr('src', 'about:blank');
-        $('#fdsFrame').hide();
-        $('#fdsDiv').show();
+        showFdsDiv();
     });
 
     var createHashList = function (arrList, hashFunc) {
@@ -71,6 +74,47 @@ $(function() {
         var showCount = 0;
         var $liGroup;
         var hashedList;
+        // Добавление "abuse"
+        if (fdsInfo.items && fdsInfo.items.abuse && fdsInfo.items.abuse.length) {
+            showCount += fdsInfo.items.abuse.length;
+            $liGroup = $('#abuseEvents .list-group');
+            hashedList = createHashList(fdsInfo.items.abuse);
+            cleanOutdatedElementByHash($liGroup.find('li:gt(0)').toArray(), hashedList);
+            var elCount = 0;
+            fdsInfo.items.abuse.forEach(function (value) {
+                elCount++;
+                if (value.present !== true) {
+                    var $el = $liGroup.find('li.el-template').clone();
+                    $el.data('hash', value.hash).data('id', value.id).data('text', value.text);
+                    $el.find('.el-text').text(value.text);
+                    $el.find('a.abuse-link').attr('href', value.url);
+                    $el.find('a.sender-id').attr('href', value.fromUserProfLink).text(value.fromUserName);
+                    $el.find('a.sender-anketa').attr('href', value.fromUserLink);
+                    $el.find('a.subject-id').attr('href', value.subjectUserProfLink).text(value.subjectUserName);
+                    $el.find('a.subject-anketa').attr('href', value.subjectUserLink);
+                    $el.removeClass('el-template').appendTo($liGroup);
+                    $el.find('a[target=fdsFrame]').on('click', function (event) {
+                        showFdsFrame();
+                    });
+                    $el.on('click', function (event) {
+                        if (event.target.nodeName.toLowerCase() !== 'a') {
+                            var elList = $(event.currentTarget).find('a.abuse-link');
+                            if (elList.length) {
+                                elList.get(0).click();
+                            }
+                        }
+                    });
+                }
+            });
+            if (elCount > 5) {
+                $('#abuseEvents').addClass('min');
+            } else {
+                $('#abuseEvents').removeClass('min');
+            }
+            $('#abuseEvents').show();
+        } else {
+            $('#abuseEvents').hide();
+        }
         // Добавление "action"
         if (fdsInfo.items && fdsInfo.items.action && fdsInfo.items.action.length) {
             showCount += fdsInfo.items.action.length;
@@ -208,9 +252,12 @@ $(function() {
                     }, lockButtonTime);
                     $el.find('button').on('click', function (event) {
                         var $this = $(this);
-                        var post = ($this.data('vote') === 'plus') ? {vote: 'plus'} : {};
+                        var post = ($this.data('vote') && $this.data('vote') !== 'minus') ? {vote: $this.data('vote')} : {};
                         var fdsAction = {id: $this.parent().parent().data('id'), text: $this.parent().parent().data('text'), post: post};
                         chrome.runtime.sendMessage({type: 'sendFdsAction', group: 'help', action: fdsAction});
+                    });
+                    $el.find('a[target=fdsFrame]').attr('href', value.replyUrl).on('click', function (event) {
+                        showFdsFrame();
                     });
                 }
             });

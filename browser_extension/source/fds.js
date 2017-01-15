@@ -9,7 +9,10 @@ var fdsConfig = {
         approve: 'security/approve/',
         arbitr: 'security/arbitr/',
         verdict: 'security/verdict/',
-        help: 'security/help/'
+        help: 'security/help/',
+        helpPromo: 'admin/promo/',
+        helpReply: 'admin/sethelp/?id={{ID}}&ln=0',
+        abuse: 'userinfo/abuse/'
     },
     relevanceItemTime: 3000
 };
@@ -21,7 +24,7 @@ fds.load = {};
 fds.parse = {};
 fds.int = {};
 fds.int.data = {items: {}, relevanceTimes: {}};
-fds.int.data.items = {action: [], approve: [], arbitr: [], verdict: [], help: []};
+fds.int.data.items = {action: [], approve: [], arbitr: [], verdict: [], help: [], abuse: []};
 
 fds.getInfo = function () {
     var info = {count: 0, items: {}};
@@ -30,7 +33,7 @@ fds.getInfo = function () {
     var items;
     var forEachFunc = function (item) {
         info.count++;
-        items.push({text: item.text, comment: item.comment, commentColor: item.commentColor, id: item.id});
+        items.push(item.pub);
     };
     for (key in dataItems) {
         if (dataItems.hasOwnProperty(key)) {
@@ -56,13 +59,13 @@ fds.sendAction = function (actionGroup, actionData) {
     var $Deferred;
     if (fds.sendAction[actionGroup] && fds.int.data.items[actionGroup] && actionData.post) {
         fds.int.data.items[actionGroup].forEach(function (value) {
-            if (actionData.id === value.id && actionData.text === value.text) {
+            if (actionData.id === value.pub.id && actionData.text === value.pub.text) {
                 var post = actionData.post;
                 var key;
                 for (key in value.hidden) {
                     post[key] = value.hidden[key];
                 }
-                var action = value.action.substr(1);
+                var action = value.action ? value.action.substr(1) : undefined;
                 var action2 = value.action2 ? value.action2.substr(1) : undefined;
                 $Deferred = fds.sendAction[actionGroup](post, action, action2);
             }
@@ -109,7 +112,14 @@ fds.sendAction.help = function (data, actionPlus, action) {
     if (data.vote === 'plus') {
         return fds.parse.help($.get(fds.config.domain + actionPlus));
     }
+    if (data.vote === 'promo') {
+        return fds.parse.help($.post(fds.config.domain + fds.config.url.helpPromo, data));
+    }
     return fds.parse.help($.post(fds.config.domain + action, data));
+};
+
+fds.sendAction.abuse = function () {
+    return $.Deferred().promise();
 };
 
 fds.load.action = function () {
@@ -147,6 +157,13 @@ fds.load.help = function () {
     return fds.parse.help($.get(fds.config.domain + fds.config.url.help));
 };
 
+fds.load.abuse = function () {
+    if (fds.int.checkRelevanceTime('loadAbuse')) {
+        return $.Deferred().resolve().promise();
+    }
+    return fds.parse.abuse($.get(fds.config.domain + fds.config.url.abuse));
+};
+
 fds.parse.action = function ($request) {
     var $deferred = $.Deferred();
     $request
@@ -157,9 +174,9 @@ fds.parse.action = function ($request) {
                 if ($iBl.length) {
                     var text = $iBl.children('div:first').text().trim();
                     if (text) {
-                        var item = {text: text, action: '', id: '', hidden: {}};
+                        var item = {pub: {id: '', text: text}, action: '', hidden: {}};
                         fds.int.loadFormData($iBl.children('div').children('form'), item);
-                        if (item.id) {
+                        if (item.pub.id) {
                             newItems.push(item);
                         }
                     }
@@ -192,9 +209,9 @@ fds.parse.approve = function ($request) {
                     var comment = $comment.text().trim();
                     var commentColor = $comment.css('color');
                     if (text) {
-                        var item = {text: text, comment: comment, commentColor: commentColor, action: '', action2: '', id: '', hidden: {}};
+                        var item = {pub: {id: '', text: text, comment: comment, commentColor: commentColor}, action: '', action2: '', hidden: {}};
                         fds.int.loadFormData($iBl.children('div').children('form'), item);
-                        if (item.id) {
+                        if (item.pub.id) {
                             newItems.push(item);
                         }
                     }
@@ -226,9 +243,9 @@ fds.parse.arbitr = function ($request) {
                     var $comment = $iBl.children('div:eq(1)');
                     var comment =  $comment.children('form').length ? undefined : $comment.text().trim();
                     if (text) {
-                        var item = {text: text, comment: comment, action: '', id: '', hidden: {}};
+                        var item = {pub: {id: '', text: text, comment: comment}, action: '', hidden: {}};
                         fds.int.loadFormData($iBl.children('div').children('form'), item);
-                        if (item.id) {
+                        if (item.pub.id) {
                             newItems.push(item);
                         }
                     }
@@ -260,9 +277,9 @@ fds.parse.verdict = function ($request) {
                     var $comment = $iBl.children('div:eq(1)');
                     var comment = $comment.children('form').length ? undefined : $comment.text().trim();
                     if (text) {
-                        var item = {text: text, comment: comment, action: '', action2: '', id: '', hidden: {}};
+                        var item = {pub: {id: '', text: text, comment: comment}, action: '', action2: '', hidden: {}};
                         fds.int.loadFormData($iBl.children('div').children('form'), item);
-                        if (item.id) {
+                        if (item.pub.id) {
                             newItems.push(item);
                         }
                     }
@@ -294,11 +311,12 @@ fds.parse.help = function ($request) {
                 var $helpDivList = $form.children('div').children('div');
                 $helpDivList.each(function (index, e) {
                     var $e = $(e);
-                    var text = $e.find('td:first').text().trim();
-                    var action = $e.find('a').attr('href');
                     var id = $e.find('input[name="del[]"]').attr('value');
+                    var text = $e.find('td:first').text().trim();
+                    var replyUrl = (fds.config.domain + fds.config.url.helpReply).replace('{{ID}}', id);
+                    var action = $e.find('a').attr('href');
                     if (text && action && id) {
-                        var item = {text: text, action: action, action2: actionMinus, id: id, hidden: {'del[]': id}};
+                        var item = {pub: {id: id, text: text, replyUrl: replyUrl}, action: action, action2: actionMinus, hidden: {'del[]': id}};
                         newItems.push(item);
                     }
                 });
@@ -317,13 +335,60 @@ fds.parse.help = function ($request) {
     return $deferred.promise();
 };
 
+fds.parse.abuse = function ($request) {
+    var $deferred = $.Deferred();
+    $request
+        .done(function (data) {
+            var newItems = [];
+            try {
+                var $iBl = $(data).children("#page_cont").children('#inner_block');
+                var $abuseDivList = $iBl.find('div.brdlft');
+                $abuseDivList.each(function (index, e) {
+                    var $e = $(e);
+                    var $e2 = $(e).prev();
+                    var $a = $e.find('a');
+                    var $aUsers = $e2.find('a');
+                    var aUser1 = $aUsers.get(0);
+                    var aUser2 = $aUsers.get(1);
+                    var aUser3 = $aUsers.get(2);
+                    var text = $a.text().trim();
+                    var url = fds.config.domain + $a.attr('href').substr(1);
+                    var subjectUserId = aUser1.getAttribute('href').substr(1);
+                    var subjectUserLink = fds.config.domain + subjectUserId;
+                    var subjectUserName = aUser1.textContent;
+                    var subjectUserProfLink = fds.config.domain + aUser2.getAttribute('href').substr(1);
+                    var fromUserId = aUser3.getAttribute('href').substr(1);
+                    var fromUserLink = fds.config.domain + fromUserId;
+                    var fromUserName = aUser3.textContent;
+                    var fromUserProfLink = fds.config.domain + aUser2.getAttribute('href').substr(1).replace(subjectUserId, fromUserId);
+                    if (text && url) {
+                        var item = {pub: {text: text, url: url, subjectUserId: subjectUserId, subjectUserLink: subjectUserLink, subjectUserName: subjectUserName, subjectUserProfLink: subjectUserProfLink, fromUserId: fromUserId, fromUserLink: fromUserLink, fromUserName: fromUserName, fromUserProfLink: fromUserProfLink}, hidden: {}};
+                        newItems.push(item);
+                    }
+                });
+            } catch (e) {
+                console.error('Error ' + e.name + ':' + e.message, e);
+            }
+            fds.int.data.items.abuse = newItems;
+            fds.int.setRelevanceTime('loadAbuse');
+            $deferred.resolve();
+        })
+        .fail(function () {
+            fds.int.data.items.abuse = [];
+            fds.int.setRelevanceTime('loadAbuse');
+            $deferred.reject();
+        });
+    return $deferred.promise();
+};
+
 fds.loadAllData = function () {
     var $deferred1 = fds.load.action();
     var $deferred2 = fds.load.approve();
     var $deferred3 = fds.load.arbitr();
     var $deferred4 = fds.load.verdict();
     var $deferred5 = fds.load.help();
-    return $.when($deferred1, $deferred2, $deferred3, $deferred4, $deferred5).promise();
+    var $deferred6 = fds.load.abuse();
+    return $.when($deferred1, $deferred2, $deferred3, $deferred4, $deferred5, $deferred6).promise();
 };
 
 fds.int.checkRelevanceTime = function(name) {
@@ -344,8 +409,8 @@ fds.int.loadFormData = function ($form, item) {
         });
     }
     $form.children('input[type=hidden]').each(function(index, e) {
-        if (item[e.getAttribute('name')] !== undefined) {
-            item[e.getAttribute('name')] = e.getAttribute('value');
+        if (item.pub[e.getAttribute('name')] !== undefined) {
+            item.pub[e.getAttribute('name')] = e.getAttribute('value');
         }
         item.hidden[e.getAttribute('name')] = e.getAttribute('value');
     });

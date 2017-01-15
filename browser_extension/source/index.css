@@ -10,6 +10,12 @@ body { padding: 51px 0 0 0; margin: 0; border: 0; }
 #fdsDiv { max-width: 820px; margin: 0px auto; padding: 10px; }
 #fdsDiv > .panel { margin-bottom: 10px; }
 #fdsDiv > .panel > .panel-heading { border-bottom: 0; }
+#abuseEvents .el-text { padding-bottom: 0; min-height: 30px; }
+#abuseEvents .pull-right { padding-left: 10px; }
+#abuseEvents .pull-left { padding-right: 10px; }
+#abuseEvents.min .el-text { min-height: 20px; }
+#abuseEvents.min .pull-right,
+#abuseEvents.min .pull-left { position: relative; top: -5px; }
 #helpEvents .pull-right { padding-left: 10px; }
 #helpEvents .el-text { padding-bottom: 0; min-height: 30px; }
 
